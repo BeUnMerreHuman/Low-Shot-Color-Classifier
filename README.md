@@ -32,6 +32,7 @@ An end-to-end pipeline for **low-shot image classification**, designed to bridge
 > [!IMPORTANT]
 >The script requires that [`uv`](https://pypi.org/project/uv/) and [`Microsoft Visual C++ Redistributable`](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170) be installed.
 ```bash
+git clone https://github.com/BeUnMerreHuman/Low-Shot-Color-Classifier.git
 uv sync
 
 ```
