@@ -21,6 +21,7 @@ An end-to-end pipeline for **low-shot image classification**, designed to bridge
 * `SelectImages.py`: PyQt6 GUI for manual image selection and labeling verification.
 * `MoveFiles.py`: Utility to organize selected images into the final training directory.
 * `CNN.ipynb`: The training pipeline, including data preprocessing (HSV conversion), model architecture, and evaluation.
+* `Inference.py`: Predicts using the trained model.
 
 ---
 
@@ -28,12 +29,15 @@ An end-to-end pipeline for **low-shot image classification**, designed to bridge
 
 ### 1. Prerequisites
 
-Ensure you have Python 3.10+ installed. It is recommended to use a virtual environment.
-
+> [!IMPORTANT]
+>The script requires that [`uv`](https://pypi.org/project/uv/) and [`Microsoft Visual C++ Redistributable`](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170) be installed.
 ```bash
-pip install tensorflow opencv-python pandas pillow pyqt6 scikit-learn seaborn python-dotenv
+uv sync
 
 ```
+>To run inference with the already trained model, proceed directly to **Step 6**, skipping all prior data processing and training steps.
+
+
 
 ### 2. Environment Variables
 
@@ -57,30 +61,30 @@ Follow these steps in order to process your data and train the model:
 Collect your color samples using your configured AppSheet app. Once ready, run the retrieval script:
 
 ```bash
-python GetData.py
+uv run GetData.py
 
 ```
 
-This downloads images to the `/images` folder and generates `metadata.csv`.
+This downloads images to the `images/` folder and generates `metadata.csv`.
 
 ### Step 2: Automated Cleaning
 
 Remove redundant or poor-quality files:
 
 ```bash
-python CleanData.py
+uv run CleanData.py
 
 ```
 
 * **Duplicates:** Removed using SHA-256 hash comparison.
 * **Resolution:** Defaults to removing images smaller than 150x150 pixels.
 
-### Step 3: Manual Curation (Low-Shot Selection)
+### Step 3: Manual Curation 
 
 Launch the GUI to hand-pick the best representatives for each class:
 
 ```bash
-python SelectImages.py
+uv run SelectImages.py
 
 ```
 
@@ -92,7 +96,7 @@ python SelectImages.py
 Organize the selected files into the folder structure required by the model:
 
 ```bash
-python MoveFiles.py
+uv run MoveFiles.py
 
 ```
 
@@ -103,19 +107,36 @@ Open `CNN.ipynb` in Jupyter or Google Colab. The notebook performs:
 1. **Preprocessing:** Converts images to HSV color space to better isolate "Color" features.
 2. **Training:** Executes a 3-block CNN with Global Average Pooling and Dropout.
 3. **Cost-Sensitive Loss:** Uses a `COST_MATRIX` to specifically penalize confusion between Blue and Purple.
+4. **ONNX Model Export:** Saves the trained model in ONNX format along with its configuration files and training results in the `output/` directory.
 
 ---
+
+### Step 6: Inference
+
+Runs an ONNX image classification pipeline that preprocesses an input image (RGB→HSV, resize, pad) and outputs the predicted class with confidence scores.
+
+```bash
+uv run Inference.py --image test.jpg --model_dir output
+
+```
+
 
 ## 📊 Model Performance
 
-The current architecture, **KHILONA_CNN**, achieves high overall accuracy of **88.24%** even with very small datasets of 75 samples per class by leveraging HSV color space and strategic augmentation.
+The current architecture, **KHILONA_CNN**, achieves an overall accuracy of **94.12%**, even with small datasets (75 samples per class), by leveraging HSV color space and targeted augmentation.
 
+### 🔍 Confusion Matrix
+![Confusion Matrix](output/confusion_matrix.png)
+
+### 📈 Class-wise Performance
 | Class | Precision | Recall | F1-Score |
 | --- | --- | --- | --- |
-| **Blue** | 0.83 | 0.91 | 0.87 |
-| **Purple** | 0.82 | 0.82 | 0.82 |
-| **Yellow** | 1.00 | 0.92 | 0.96 |
+| **Blue** | 1.00 | 0.91 | 0.95 |
+| **Purple** | 0.84 | 1.00 | 0.91 |
+| **Yellow** | 1.00 | 0.92 | 0.95 |
 
----
+### 📉 Training History
+![Training History](output/training_history.png)
+
 
 
