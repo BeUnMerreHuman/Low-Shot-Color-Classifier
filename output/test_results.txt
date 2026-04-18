@@ -1,0 +1,22 @@
+Test Accuracy: 0.9412  (94.12%)
+
+Classification Report:
+
+              precision    recall  f1-score   support
+
+        Blue     1.0000    0.9091    0.9524        11
+      Purple     0.8462    1.0000    0.9167        11
+      Yellow     1.0000    0.9167    0.9565        12
+
+    accuracy                         0.9412        34
+   macro avg     0.9487    0.9419    0.9419        34
+weighted avg     0.9502    0.9412    0.9423        34
+
+
+Confusion Matrix (rows=True, cols=Predicted):
+
+        Blue  Purple  Yellow
+Blue      10       1       0
+Purple     0      11       0
+Yellow     0       1      11
+

@@ -1,0 +1,13 @@
+{
+  "img_size": 128,
+  "pad_color": [
+    128,
+    128,
+    128
+  ],
+  "classes": [
+    "Blue",
+    "Purple",
+    "Yellow"
+  ]
+}
